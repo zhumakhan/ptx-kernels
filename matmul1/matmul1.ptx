@@ -1,0 +1,599 @@
+
+Fatbin elf code:
+================
+arch = sm_90a
+code version = [1,8]
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_90a
+code version = [9,0]
+host = linux
+compile_size = 64bit
+compressed
+ptxasOptions = 
+
+
+
+
+
+
+
+
+.version 9.0
+.target sm_90a
+.address_size 64
+
+
+
+
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo5beginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo3endE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo6cbeginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo4cendE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo6rbeginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo4rendE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo7crbeginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__45__cpo5crendE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__443_GLOBAL__N__780801cc_10_matmul1_cu_4c1b12986ignoreE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__419piecewise_constructE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__48in_placeE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std3__420unreachable_sentinelE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4swapE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo9iter_moveE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo5beginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo3endE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo6cbeginE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4cendE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo7advanceE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo9iter_swapE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4nextE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4prevE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4dataE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo5cdataE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo4sizeE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo5ssizeE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12984cuda3std6ranges3__45__cpo8distanceE[1];
+.global .align 1 .b8 _ZN41_INTERNAL_780801cc_10_matmul1_cu_4c1b12986thrust23THRUST_300001_SM_900_NS6system6detail10sequential3seqE[1];
+.extern .shared .align 128 .b8 smem_[];
+
+.visible .entry _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16(
+.param .align 128 .b8 _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16_param_0[128],
+.param .align 128 .b8 _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16_param_1[128],
+.param .u64 _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16_param_2
+)
+{
+.reg .pred %p<7>;
+.reg .f32 %f<769>;
+.reg .b32 %r<56>;
+.reg .b64 %rd<41>;
+
+.shared .align 8 .u64 _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_a;
+
+.shared .align 8 .u64 _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_b;
+
+mov.b64 %rd3, _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16_param_0;
+mov.b64 %rd4, _Z7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16_param_1;
+mov.u32 %r3, -1;
+mov.u32 %r5, 0;
+mov.u32 %r1, %r5;
+mov.u32 %r2, %r5;
+
+{
+.reg .b32 %rx;
+.reg .pred %px;
+elect.sync %rx|%px, %r3;
+@%px mov.s32 %r2, 1;
+mov.s32 %r1, %rx;
+}
+
+
+mov.u32 %r6, %tid.x;
+shr.u32 %r7, %r6, 5;
+mov.u32 %r8, 31;
+shfl.sync.idx.b32 %r9|%p2, %r7, %r5, %r8, %r3;
+setp.eq.s32 %p3, %r9, 0;
+setp.ne.s32 %p4, %r2, 0;
+and.pred %p1, %p4, %p3;
+not.pred %p5, %p1;
+@%p5 bra $L__BB0_2;
+
+cvta.param.u64 %rd5, %rd3;
+
+prefetch.tensormap [%rd5];
+
+cvta.param.u64 %rd6, %rd4;
+
+prefetch.tensormap [%rd6];
+
+mov.u32 %r10, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_a;
+mov.u32 %r13, 1;
+
+mbarrier.init.shared::cta.b64 [%r10], %r13;
+
+
+mov.u32 %r12, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_b;
+
+mbarrier.init.shared::cta.b64 [%r12], %r13;
+
+
+
+$L__BB0_2:
+bar.sync 0;
+@%p5 bra $L__BB0_4;
+
+mov.u32 %r14, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_a;
+
+mbarrier.arrive.expect_tx.shared::cta.b64 _, [%r14], 8192;
+
+
+mov.u32 %r15, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_b;
+
+mbarrier.arrive.expect_tx.shared::cta.b64 _, [%r15], 16384;
+
+
+cvta.param.u64 %rd7, %rd3;
+mov.u32 %r16, smem_;
+mov.u32 %r27, 0;
+
+cp.async.bulk.tensor.4d.shared::cluster.global.tile.mbarrier::complete_tx::bytes [%r16], [%rd7, {%r27, %r27, %r27, %r27}], [%r14];
+
+cvta.param.u64 %rd8, %rd4;
+add.s32 %r22, %r16, 8192;
+
+cp.async.bulk.tensor.4d.shared::cluster.global.tile.mbarrier::complete_tx::bytes [%r22], [%rd8, {%r27, %r27, %r27, %r27}], [%r15];
+
+
+$L__BB0_4:
+mov.u32 %r32, smem_;
+and.b32 %r33, %r32, 262112;
+shr.u32 %r34, %r33, 4;
+cvt.u64.u32 %rd33, %r34;
+or.b64 %rd9, %rd33, 4611686293305360384;
+
+
+add.s32 %r35, %r32, 32;
+and.b32 %r36, %r35, 262112;
+shr.u32 %r37, %r36, 4;
+cvt.u64.u32 %rd34, %r37;
+or.b64 %rd11, %rd34, 4611686293305360384;
+
+
+add.s32 %r38, %r32, 64;
+and.b32 %r39, %r38, 262112;
+shr.u32 %r40, %r39, 4;
+cvt.u64.u32 %rd35, %r40;
+or.b64 %rd13, %rd35, 4611686293305360384;
+
+
+add.s32 %r41, %r32, 96;
+and.b32 %r42, %r41, 262112;
+shr.u32 %r43, %r42, 4;
+cvt.u64.u32 %rd36, %r43;
+or.b64 %rd15, %rd36, 4611686293305360384;
+
+
+add.s32 %r44, %r32, 8192;
+and.b32 %r45, %r44, 262112;
+shr.u32 %r46, %r45, 4;
+cvt.u64.u32 %rd37, %r46;
+or.b64 %rd17, %rd37, 4611686293305360384;
+
+
+add.s32 %r47, %r32, 8224;
+and.b32 %r48, %r47, 262112;
+shr.u32 %r49, %r48, 4;
+cvt.u64.u32 %rd38, %r49;
+or.b64 %rd19, %rd38, 4611686293305360384;
+
+
+add.s32 %r50, %r32, 8256;
+and.b32 %r51, %r50, 262112;
+shr.u32 %r52, %r51, 4;
+cvt.u64.u32 %rd39, %r52;
+or.b64 %rd21, %rd39, 4611686293305360384;
+
+
+add.s32 %r53, %r32, 8288;
+and.b32 %r54, %r53, 262112;
+shr.u32 %r55, %r54, 4;
+cvt.u64.u32 %rd40, %r55;
+or.b64 %rd23, %rd40, 4611686293305360384;
+
+
+mov.u32 %r28, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_a;
+mov.u32 %r31, 0;
+
+{
+.reg .pred P1;
+LAB_WAIT:
+mbarrier.try_wait.parity.shared::cta.b64 P1, [%r28], %r31;
+@P1 bra.uni DONE;
+bra.uni LAB_WAIT;
+DONE:
+}
+
+
+mov.u32 %r30, _ZZ7matmul1ILj64ELj128ELj64ELj1ELj128EEv14CUtensorMap_stS0_P13__nv_bfloat16E9barrier_b;
+
+{
+.reg .pred P1;
+LAB_WAIT:
+mbarrier.try_wait.parity.shared::cta.b64 P1, [%r30], %r31;
+@P1 bra.uni DONE;
+bra.uni LAB_WAIT;
+DONE:
+}
+
+
+mov.f32 %f192, 0f00000000;
+mov.f32 %f129, %f192;
+
+
+mov.f32 %f130, %f192;
+
+
+mov.f32 %f131, %f192;
+
+
+mov.f32 %f132, %f192;
+
+
+mov.f32 %f133, %f192;
+
+
+mov.f32 %f134, %f192;
+
+
+mov.f32 %f135, %f192;
+
+
+mov.f32 %f136, %f192;
+
+
+mov.f32 %f137, %f192;
+
+
+mov.f32 %f138, %f192;
+
+
+mov.f32 %f139, %f192;
+
+
+mov.f32 %f140, %f192;
+
+
+mov.f32 %f141, %f192;
+
+
+mov.f32 %f142, %f192;
+
+
+mov.f32 %f143, %f192;
+
+
+mov.f32 %f144, %f192;
+
+
+mov.f32 %f145, %f192;
+
+
+mov.f32 %f146, %f192;
+
+
+mov.f32 %f147, %f192;
+
+
+mov.f32 %f148, %f192;
+
+
+mov.f32 %f149, %f192;
+
+
+mov.f32 %f150, %f192;
+
+
+mov.f32 %f151, %f192;
+
+
+mov.f32 %f152, %f192;
+
+
+mov.f32 %f153, %f192;
+
+
+mov.f32 %f154, %f192;
+
+
+mov.f32 %f155, %f192;
+
+
+mov.f32 %f156, %f192;
+
+
+mov.f32 %f157, %f192;
+
+
+mov.f32 %f158, %f192;
+
+
+mov.f32 %f159, %f192;
+
+
+mov.f32 %f160, %f192;
+
+
+mov.f32 %f161, %f192;
+
+
+mov.f32 %f162, %f192;
+
+
+mov.f32 %f163, %f192;
+
+
+mov.f32 %f164, %f192;
+
+
+mov.f32 %f165, %f192;
+
+
+mov.f32 %f166, %f192;
+
+
+mov.f32 %f167, %f192;
+
+
+mov.f32 %f168, %f192;
+
+
+mov.f32 %f169, %f192;
+
+
+mov.f32 %f170, %f192;
+
+
+mov.f32 %f171, %f192;
+
+
+mov.f32 %f172, %f192;
+
+
+mov.f32 %f173, %f192;
+
+
+mov.f32 %f174, %f192;
+
+
+mov.f32 %f175, %f192;
+
+
+mov.f32 %f176, %f192;
+
+
+mov.f32 %f177, %f192;
+
+
+mov.f32 %f178, %f192;
+
+
+mov.f32 %f179, %f192;
+
+
+mov.f32 %f180, %f192;
+
+
+mov.f32 %f181, %f192;
+
+
+mov.f32 %f182, %f192;
+
+
+mov.f32 %f183, %f192;
+
+
+mov.f32 %f184, %f192;
+
+
+mov.f32 %f185, %f192;
+
+
+mov.f32 %f186, %f192;
+
+
+mov.f32 %f187, %f192;
+
+
+mov.f32 %f188, %f192;
+
+
+mov.f32 %f189, %f192;
+
+
+mov.f32 %f190, %f192;
+
+
+mov.f32 %f191, %f192;
+
+
+
+
+
+fence.proxy.async.shared::cta;
+
+
+
+wgmma.fence.sync.aligned;
+
+
+
+{
+wgmma.mma_async.sync.aligned.m64n128k16.f32.bf16.bf16 {%f129, %f130, %f131, %f132, %f133, %f134, %f135, %f136, %f137, %f138, %f139, %f140, %f141, %f142, %f143, %f144, %f145, %f146, %f147, %f148, %f149, %f150, %f151, %f152, %f153, %f154, %f155, %f156, %f157, %f158, %f159, %f160, %f161, %f162, %f163, %f164, %f165, %f166, %f167, %f168, %f169, %f170, %f171, %f172, %f173, %f174, %f175, %f176, %f177, %f178, %f179, %f180, %f181, %f182, %f183, %f184, %f185, %f186, %f187, %f188, %f189, %f190, %f191, %f192}, %rd9, %rd17, 1, 1, 1, 0, 0;
+}
+
+
+
+{
+wgmma.mma_async.sync.aligned.m64n128k16.f32.bf16.bf16 {%f129, %f130, %f131, %f132, %f133, %f134, %f135, %f136, %f137, %f138, %f139, %f140, %f141, %f142, %f143, %f144, %f145, %f146, %f147, %f148, %f149, %f150, %f151, %f152, %f153, %f154, %f155, %f156, %f157, %f158, %f159, %f160, %f161, %f162, %f163, %f164, %f165, %f166, %f167, %f168, %f169, %f170, %f171, %f172, %f173, %f174, %f175, %f176, %f177, %f178, %f179, %f180, %f181, %f182, %f183, %f184, %f185, %f186, %f187, %f188, %f189, %f190, %f191, %f192}, %rd11, %rd19, 1, 1, 1, 0, 0;
+}
+
+
+
+{
+wgmma.mma_async.sync.aligned.m64n128k16.f32.bf16.bf16 {%f129, %f130, %f131, %f132, %f133, %f134, %f135, %f136, %f137, %f138, %f139, %f140, %f141, %f142, %f143, %f144, %f145, %f146, %f147, %f148, %f149, %f150, %f151, %f152, %f153, %f154, %f155, %f156, %f157, %f158, %f159, %f160, %f161, %f162, %f163, %f164, %f165, %f166, %f167, %f168, %f169, %f170, %f171, %f172, %f173, %f174, %f175, %f176, %f177, %f178, %f179, %f180, %f181, %f182, %f183, %f184, %f185, %f186, %f187, %f188, %f189, %f190, %f191, %f192}, %rd13, %rd21, 1, 1, 1, 0, 0;
+}
+
+
+
+{
+wgmma.mma_async.sync.aligned.m64n128k16.f32.bf16.bf16 {%f129, %f130, %f131, %f132, %f133, %f134, %f135, %f136, %f137, %f138, %f139, %f140, %f141, %f142, %f143, %f144, %f145, %f146, %f147, %f148, %f149, %f150, %f151, %f152, %f153, %f154, %f155, %f156, %f157, %f158, %f159, %f160, %f161, %f162, %f163, %f164, %f165, %f166, %f167, %f168, %f169, %f170, %f171, %f172, %f173, %f174, %f175, %f176, %f177, %f178, %f179, %f180, %f181, %f182, %f183, %f184, %f185, %f186, %f187, %f188, %f189, %f190, %f191, %f192}, %rd15, %rd23, 1, 1, 1, 0, 0;
+}
+
+
+
+wgmma.commit_group.sync.aligned;
+
+
+
+wgmma.wait_group.sync.aligned 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fence.proxy.async.shared::cta;
+
+
+ret;
+
+}
+
+
