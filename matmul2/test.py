@@ -1,7 +1,6 @@
-# tma load, wgmma matmul and tma store
-
+# tma load in 2 stages, wgmma matmul and tma store
 import torch
-import matmul1
+import matmul2
 
 torch.set_printoptions(threshold=float('inf'), linewidth=2048)
 M,N,K = 1024,8192,128*8
@@ -11,7 +10,7 @@ b = torch.randn(N, K, dtype=torch.bfloat16, device='cuda')
 c = torch.ones(M, N, dtype=torch.bfloat16, device="cuda")
 
 with open('logs.txt', 'w') as f:
-    matmul1.kernel_matmul(a, b, c)
+    matmul2.kernel_matmul(a, b, c)
     # print(c, file=f)
     c_true = torch.matmul(a,b.T)
     # print(c, file=f)

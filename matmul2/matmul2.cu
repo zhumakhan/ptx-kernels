@@ -7,7 +7,7 @@
 #include "utils.cuh"
 
 template<uint32_t BM, uint32_t BN, uint32_t BK, uint32_t STAGES, uint32_t NUM_THREADS>
-__global__ void matmul1(
+__global__ void matmul2(
     const __grid_constant__ CUtensorMap tmaA,
     const __grid_constant__ CUtensorMap tmaB,
     const __grid_constant__ CUtensorMap tmaC,
@@ -21,38 +21,45 @@ __global__ void matmul1(
     
     
     nv_bfloat16* a_smem = (nv_bfloat16*)smem_;
-    nv_bfloat16* b_smem = (nv_bfloat16*)smem_ + (BK / 64) * BM * 64;
+    nv_bfloat16* b_smem = (nv_bfloat16*)smem_ + STAGES * (BK / 64) * BM * 64;
 
-    // smem is (BK / 64) x BM x 64 space. Anything more that 64 gets wrapped around and extended downwards
+    // smem is STAGES * (BK / 64) x BM x 64 space. Anything more that 64 gets wrapped around and extended downwards
     
-    __shared__ __align__(8) uint64_t barrier_a;
-    __shared__ __align__(8) uint64_t barrier_b;
+    __shared__ __align__(8) uint64_t barrier_a[STAGES];
+    __shared__ __align__(8) uint64_t barrier_b[STAGES];
 
     if (warp_idx == 0 and lane_pred) {
         prefetch_tma_descriptor(&tmaA);
         prefetch_tma_descriptor(&tmaB);
         prefetch_tma_descriptor(&tmaC);
-        init_barrier(&barrier_a, 1);
-        init_barrier(&barrier_b, 1);
+        for(int stage = 0; stage < STAGES; stage++){
+            init_barrier(&barrier_a[stage], 1);
+            init_barrier(&barrier_b[stage], 1);
+        }
+        
     }
     __syncthreads();
 
-    uint64_t desc_a[BK/64][4];
-    uint64_t desc_b[BK/64][4];
+    uint64_t desc_a[STAGES][BK/64][4];
+    uint64_t desc_b[STAGES][BK/64][4];
     
+    #pragma unrll
+    for(int stage = 0; stage < STAGES; stage += 1){
     #pragma unroll
     for(int i = 0; i < BK / 64; i += 1){
     #pragma unroll
     for(int j = 0; j < 4; j += 1){
-        desc_a[i][j] = wgmma::make_smem_desc<64*sizeof(nv_bfloat16)>(a_smem + j * 16 + i * BM * 64);
-    }}
+        desc_a[stage][i][j] = wgmma::make_smem_desc<64*sizeof(nv_bfloat16)>(a_smem + j * 16 + i * BM * 64 + stage * BM * BK);
+    }}}
 
+    #pragma unrll
+    for(int stage = 0; stage < STAGES; stage += 1){
     #pragma unroll
     for(int i = 0; i < BK / 64; i += 1){
     #pragma unroll
     for(int j = 0; j < 4; j += 1){
-        desc_b[i][j] = wgmma::make_smem_desc<64*sizeof(nv_bfloat16)>(b_smem + j * 16 + i * BN * 64);
-    }}
+        desc_b[stage][i][j] = wgmma::make_smem_desc<64*sizeof(nv_bfloat16)>(b_smem + j * 16 + i * BN * 64 + stage * BN * BK);
+    }}}
     
     float C_reg[BN/16][8];
     
@@ -61,35 +68,63 @@ __global__ void matmul1(
         #pragma unroll
         for(int j = 0; j < 8; j++)C_reg[i][j]=0.f;
     }
-    int load_phase = 1;
+    int load_phase[STAGES];
+    for(int stage = 0; stage < STAGES; stage += 1)load_phase[stage] = 1;
+
     
-    wgmma::warpgroup_fence_descriptors<BM, BN, BK>(desc_a, desc_b);
     wgmma::warpgroup_fence_operand<BN>(C_reg);
     wgmma::wgmma_arrive();
+    
+    int curr_stage = 0;
+    if (warp_idx == 0 and lane_pred){
+        expect_bytes<BM * BK * sizeof(nv_bfloat16)>(&barrier_a[curr_stage]);
+        expect_bytes<BN * BK * sizeof(nv_bfloat16)>(&barrier_b[curr_stage]);
+
+        load_async<BM, BK>(a_smem, &tmaA, &barrier_a[curr_stage], m_offset, 0);
+        load_async<BN, BK>(b_smem, &tmaB, &barrier_b[curr_stage], n_offset, 0);
+    }
 
     // loop over K, loading BK tile int smem.
-    for(int k = 0; k < K; k += BK){
-        if (warp_idx == 0 and lane_pred){
-            expect_bytes<BM * BK * sizeof(nv_bfloat16)>(&barrier_a);
-            expect_bytes<BN * BK * sizeof(nv_bfloat16)>(&barrier_b);
+    for(int k = BK; k < K; k += BK){
+        int next_stage = curr_stage + 1;
+        if(next_stage == STAGES)next_stage = 0;
 
-            load_async<BM, BK>(a_smem, &tmaA, &barrier_a, m_offset, k);
-            load_async<BN, BK>(b_smem, &tmaB, &barrier_b, n_offset, k);
+        if (warp_idx == 0 and lane_pred){
+            expect_bytes<BM * BK * sizeof(nv_bfloat16)>(&barrier_a[next_stage]);
+            expect_bytes<BN * BK * sizeof(nv_bfloat16)>(&barrier_b[next_stage]);
+
+            load_async<BM, BK>(a_smem + next_stage * BM*BK, &tmaA, &barrier_a[next_stage], m_offset, k);
+            load_async<BN, BK>(b_smem + next_stage * BN*BK, &tmaB, &barrier_b[next_stage], n_offset, k);
         }
         
-        load_phase ^= 1;
-        wait(&barrier_a, load_phase); // wait instruction blocks as long as internal phase bit is equal to phase provided by user
-        wait(&barrier_b, load_phase); // internal phase of the barrier flips everytime when required amount of bytes are transacted
-
+        load_phase[curr_stage] ^= 1;
+        wait(&barrier_a[curr_stage], load_phase[curr_stage]); // wait instruction blocks as long as internal phase bit is equal to phase provided by user
+        wait(&barrier_b[curr_stage], load_phase[curr_stage]); // internal phase of the barrier flips everytime when required amount of bytes are transacted
         
         for(int i = 0; i < BK / 64; i += 1){
             for(int j = 0; j < 4; j += 1){
                 wgmma::wgmma_m64n128k16_bf16bf16f32(
                     C_reg,
-                    desc_a[i][j],
-                    desc_b[i][j]
+                    desc_a[curr_stage][i][j],
+                    desc_b[curr_stage][i][j]
                 );
             }
+        }
+        curr_stage = next_stage;
+    }
+
+    load_phase[curr_stage] ^= 1;
+    wait(&barrier_a[curr_stage], load_phase[curr_stage]); // wait instruction blocks as long as internal phase bit is equal to phase provided by user
+    wait(&barrier_b[curr_stage], load_phase[curr_stage]); // internal phase of the barrier flips everytime when required amount of bytes are transacted
+    
+    
+    for(int i = 0; i < BK / 64; i += 1){
+        for(int j = 0; j < 4; j += 1){
+            wgmma::wgmma_m64n128k16_bf16bf16f32(
+                C_reg,
+                desc_a[curr_stage][i][j],
+                desc_b[curr_stage][i][j]
+            );
         }
     }
 
@@ -136,7 +171,7 @@ void kernel_matmul(
     constexpr int BM = 64;
     constexpr int BN = 128;
     constexpr int BK = 128;
-    constexpr int STAGES = 1;
+    constexpr int STAGES = 2;
     constexpr int NUM_THREADS = 128;
     
     static_assert(BK % 64 == 0 && "BK must be multiple of 64 for 128byte swizzling");
@@ -156,7 +191,7 @@ void kernel_matmul(
     // no swizzled layout for store
     CUtensorMap tma_map_C = create_tensor_map_4D_store<BM, BN>(reinterpret_cast<nv_bfloat16*>(c.data_ptr()), 1, 1, M, N, M*N, M*N, N);
     
-    constexpr int smem_size = STAGES * (BM*BK + BN*BK) * sizeof(nv_bfloat16) + 1024 * STAGES;
+    constexpr int smem_size = STAGES * (BM*BK + BN*BK) * sizeof(nv_bfloat16);
     
     printf("Smem size: %d\n", smem_size);
 
@@ -168,7 +203,7 @@ void kernel_matmul(
     static_assert(BK % 64 == 0);
 
     
-    auto* kernel = matmul1<BM, BN, BK, STAGES, NUM_THREADS>;
+    auto* kernel = matmul2<BM, BN, BK, STAGES, NUM_THREADS>;
     cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size);
     
     dim3 gridDim((M+BM-1)/BM, (N+BN-1)/BN, 1);

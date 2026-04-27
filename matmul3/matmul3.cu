@@ -7,7 +7,7 @@
 #include "utils.cuh"
 
 template<uint32_t BM, uint32_t BN, uint32_t BK, uint32_t STAGES, uint32_t NUM_THREADS>
-__global__ void matmul1(
+__global__ void matmul3(
     const __grid_constant__ CUtensorMap tmaA,
     const __grid_constant__ CUtensorMap tmaB,
     const __grid_constant__ CUtensorMap tmaC,
@@ -136,7 +136,7 @@ void kernel_matmul(
     constexpr int BM = 64;
     constexpr int BN = 128;
     constexpr int BK = 128;
-    constexpr int STAGES = 1;
+    constexpr int STAGES = 2;
     constexpr int NUM_THREADS = 128;
     
     static_assert(BK % 64 == 0 && "BK must be multiple of 64 for 128byte swizzling");
@@ -156,7 +156,7 @@ void kernel_matmul(
     // no swizzled layout for store
     CUtensorMap tma_map_C = create_tensor_map_4D_store<BM, BN>(reinterpret_cast<nv_bfloat16*>(c.data_ptr()), 1, 1, M, N, M*N, M*N, N);
     
-    constexpr int smem_size = STAGES * (BM*BK + BN*BK) * sizeof(nv_bfloat16) + 1024 * STAGES;
+    constexpr int smem_size = STAGES * (BM*BK + BN*BK) * sizeof(nv_bfloat16);
     
     printf("Smem size: %d\n", smem_size);
 
@@ -168,7 +168,7 @@ void kernel_matmul(
     static_assert(BK % 64 == 0);
 
     
-    auto* kernel = matmul1<BM, BN, BK, STAGES, NUM_THREADS>;
+    auto* kernel = matmul3<BM, BN, BK, STAGES, NUM_THREADS>;
     cudaFuncSetAttribute(kernel, cudaFuncAttributeMaxDynamicSharedMemorySize, smem_size);
     
     dim3 gridDim((M+BM-1)/BM, (N+BN-1)/BN, 1);
